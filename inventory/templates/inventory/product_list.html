@@ -1,0 +1,45 @@
+{% extends 'inventory/base.html' %} 
+{% block title %}Products{% endblock %} 
+{% block content %}
+<main class="container my-5">
+
+    <div class="d-flex justify-content-center align-items-center shadow p-3 mb-5 bg-body-tertiary rounded-4">
+        <div>
+            <div class="d-flex justify-content-between">
+                <h3 class="my-3">List of Products</h3>
+                <div class="d-flex justify-content-center align-items-center">
+                    <a href="{% url 'admin:inventory_product_changelist' %}" class="btn btn-outline-secondary">Edit</a>
+                </div>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Supplier</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Reorder Level</th>
+                    <th scope="col">Unit Price</th>
+                    <th scope="col">Date Added</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                        <tr>
+                        <th scope="row">{{forloop.counter}}</th>
+                        <td>{{product.product_name}}</td>
+                        <td>{{product.category}}</td>
+                        <td>{{product.supplier}}</td>
+                        <td>{{product.quantity_in_stock}}</td>
+                        <td>{{product.reorder_level}}</td>
+                        <td>{{product.unit_price}}</td>
+                        <td>{{product.date_added}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+  </div>
+</main>
+{% endblock %}
