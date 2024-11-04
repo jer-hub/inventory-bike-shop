@@ -77,10 +77,10 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "verceldb",
-        "USER": "default",
-        "PASSWORD": "M6ZwmYSj5UCk",
-        "HOST": "ep-autumn-sun-a1ioe1bw-pooler.ap-southeast-1.aws.neon.tech",
+        'NAME': "inventory",
+        'USER': "inventory_owner",
+        'PASSWORD': "EP9UWo1aMBSh",
+        'HOST': "ep-spring-queen-a8q7bor2.eastus2.azure.neon.tech",
         "PORT": "5432",
     }
 }
