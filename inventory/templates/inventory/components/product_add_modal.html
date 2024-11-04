@@ -1,0 +1,112 @@
+<div class="modal modal-lg fade" id="add_product_modal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="addProductModalLabel">Add New Product</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="add_product_form" action="{% url 'inventory:create_product' %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div id="product_form_errors"></div>
+                    {% if modal_errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <ul>
+                                {% for field, errors in modal_errors.items %}
+                                    {% for error in errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+                    <div class="row">
+                        <div class="col">
+                            <label for="product_name">Product Name</label>
+                            <input class="form-control" type="text" name="product_name" id="product_name" placeholder="Product Name" />
+                        </div>
+                        <div class="col">
+                            <label for="category">Category</label>
+                            <input class="form-control" type="text" name="category" id="category" placeholder="Category" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="supplier">Supplier</label>
+                            <select class="form-control" name="supplier" id="supplier">
+                                {% for supplier in suppliers %}
+                                    <option value="{{ supplier.pk }}">{{ supplier.supplier_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="quantity_in_stock">Quantity in Stock</label>
+                            <input class="form-control" type="number" name="quantity_in_stock" id="quantity_in_stock" placeholder="Quantity in Stock" />
+                        </div>
+                        <div class="col">
+                            <label for="reorder_level">Reorder Level</label>
+                            <input class="form-control" type="number" name="reorder_level" id="reorder_level" placeholder="Reorder Level" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="unit_price">Unit Price</label>
+                            <input class="form-control" type="number" step="0.01" name="unit_price" id="unit_price" placeholder="Unit Price" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById('add_product_form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var form = this;
+        var formData = new FormData(form);
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            var errorContainer = document.getElementById('product_form_errors');
+            errorContainer.innerHTML = '';
+            if (data.success) {
+                var successAlert = '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                    data.message +
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                    '</div>';
+                errorContainer.innerHTML = successAlert;
+                setTimeout(function() {
+                    location.reload();
+                }, 2000);
+            } else {
+                var errorAlert = '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                    (data.message || 'An error occurred.') +
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                    '</div>';
+                errorContainer.innerHTML = errorAlert;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            var errorContainer = document.getElementById('product_form_errors');
+            var errorAlert = '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                'An error occurred.' +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                '</div>';
+            errorContainer.innerHTML = errorAlert;
+        });
+    });
+</script>

@@ -4,9 +4,28 @@ from .models import Supplier, Product
 class SupplierForm(forms.ModelForm):
     class Meta:
         model = Supplier
-        fields = '__all__'
+        fields = ['supplier_name', 'contact_name', 'phone', 'email', 'address', 'city', 'state', 'postal_code', 'country']
+        widgets = {
+            'supplier_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Supplier Name'}),
+            'contact_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contact Name'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email Address'}),
+            'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Current Address'}),
+            'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'}),
+            'state': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'State'}),
+            'postal_code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Postal Code'}),
+            'country': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'}),
+        }
 
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = '__all__'
+        fields = ['product_name', 'category', 'supplier', 'quantity_in_stock', 'reorder_level', 'unit_price']
+        widgets = {
+            'product_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Product Name'}),
+            'category': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Category'}),
+            'supplier': forms.Select(attrs={'class': 'form-control'}),
+            'quantity_in_stock': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Quantity in Stock'}),
+            'reorder_level': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Reorder Level'}),
+            'unit_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Unit Price', 'step': '0.01'}),
+        }

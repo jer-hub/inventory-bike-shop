@@ -3,7 +3,8 @@ from . import views
 
 app_name = "inventory"
 urlpatterns = [
-
+    path('', views.view_main, name='view_main'),
+    
     path('suppliers/', views.supplier_list, name='supplier_list'),
     path('suppliers/create/', views.create_supplier, name='create_supplier'),
     path('suppliers/update/<int:pk>/', views.update_supplier, name='update_supplier'),

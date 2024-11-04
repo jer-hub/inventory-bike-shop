@@ -1,0 +1,114 @@
+<div class="modal modal-lg fade"
+     id="edit_modal_{{ supplier.pk }}"
+     tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Edit Supplier</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="edit_form_{{ supplier.pk }}"
+                  action="{% url 'inventory:update_supplier' supplier.pk %}"
+                  method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <label for="supplier_name_{{ supplier.pk }}">Supplier Name</label>
+                            <input class="form-control"
+                                   type="text"
+                                   name="supplier_name"
+                                   id="supplier_name_{{ supplier.pk }}"
+                                   value="{{ supplier.supplier_name }}"
+                                   placeholder="Supplier Name" />
+                        </div>
+                        <div class="col">
+                            <label for="contact_name_{{ supplier.pk }}">Contact Name</label>
+                            <input class="form-control"
+                                   type="text"
+                                   name="contact_name"
+                                   id="contact_name_{{ supplier.pk }}"
+                                   value="{{ supplier.contact_name }}"
+                                   placeholder="Contact Name" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="phone_{{ supplier.pk }}">Phone</label>
+                            <input class="form-control"
+                                   type="text"
+                                   name="phone"
+                                   id="phone_{{ supplier.pk }}"
+                                   value="{{ supplier.phone }}"
+                                   placeholder="Phone" />
+                        </div>
+                        <div class="col">
+                            <label for="email_{{ supplier.pk }}">Email</label>
+                            <input class="form-control"
+                                   type="email"
+                                   name="email"
+                                   id="email_{{ supplier.pk }}"
+                                   value="{{ supplier.email }}"
+                                   placeholder="Email" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="address_{{ supplier.pk }}">Address</label>
+                            <input class="form-control"
+                                   type="text"
+                                   name="address"
+                                   id="address_{{ supplier.pk }}"
+                                   value="{{ supplier.address }}"
+                                   placeholder="Address" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="city_{{ supplier.pk }}">City</label>
+                            <input class="form-control"
+                                   type="text"
+                                   name="city"
+                                   id="city_{{ supplier.pk }}"
+                                   value="{{ supplier.city }}"
+                                   placeholder="City" />
+                        </div>
+                        <div class="col">
+                            <label for="state_{{ supplier.pk }}">State</label>
+                            <input class="form-control"
+                                   type="text"
+                                   name="state"
+                                   id="state_{{ supplier.pk }}"
+                                   value="{{ supplier.state }}"
+                                   placeholder="State" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="postal_code_{{ supplier.pk }}">Postal Code</label>
+                            <input class="form-control"
+                                   type="text"
+                                   name="postal_code"
+                                   id="postal_code_{{ supplier.pk }}"
+                                   value="{{ supplier.postal_code }}"
+                                   placeholder="Postal Code" />
+                        </div>
+                        <div class="col">
+                            <label for="country_{{ supplier.pk }}">Country</label>
+                            <input class="form-control"
+                                   type="text"
+                                   name="country"
+                                   id="country_{{ supplier.pk }}"
+                                   value="{{ supplier.country }}"
+                                   placeholder="Country" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

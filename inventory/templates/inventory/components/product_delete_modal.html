@@ -1,0 +1,20 @@
+<div class="modal fade" id="delete_modal_{{ product.pk }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Delete Product</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="delete_form_{{ product.pk }}" action="{% url 'inventory:delete_product' product.pk %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the product "{{ product.product_name }}"?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

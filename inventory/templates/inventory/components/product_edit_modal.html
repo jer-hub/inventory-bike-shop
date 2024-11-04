@@ -1,0 +1,85 @@
+<div class="modal modal-lg fade"
+     id="edit_modal_{{ product.pk }}"
+     tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Edit Product</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="edit_form_{{ product.pk }}"
+                  action="{% url 'inventory:update_product' product.pk %}"
+                  method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <label for="product_name_{{ product.pk }}">Product Name</label>
+                            <input class="form-control"
+                                   type="text"
+                                   name="product_name"
+                                   id="product_name_{{ product.pk }}"
+                                   value="{{ product.product_name }}"
+                                   placeholder="Product Name" />
+                        </div>
+                        <div class="col">
+                            <label for="category_{{ product.pk }}">Category</label>
+                            <input class="form-control"
+                                   type="text"
+                                   name="category"
+                                   id="category_{{ product.pk }}"
+                                   value="{{ product.category }}"
+                                   placeholder="Category" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="supplier_{{ product.pk }}">Supplier</label>
+                            <select class="form-control" name="supplier" id="supplier_{{ product.pk }}">
+                                {% for supplier in suppliers %}
+                                    <option value="{{ supplier.pk }}" {% if supplier.pk == product.supplier.pk %}selected{% endif %}>{{ supplier.supplier_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="quantity_in_stock_{{ product.pk }}">Quantity in Stock</label>
+                            <input class="form-control"
+                                   type="number"
+                                   name="quantity_in_stock"
+                                   id="quantity_in_stock_{{ product.pk }}"
+                                   value="{{ product.quantity_in_stock }}"
+                                   placeholder="Quantity in Stock" />
+                        </div>
+                        <div class="col">
+                            <label for="reorder_level_{{ product.pk }}">Reorder Level</label>
+                            <input class="form-control"
+                                   type="number"
+                                   name="reorder_level"
+                                   id="reorder_level_{{ product.pk }}"
+                                   value="{{ product.reorder_level }}"
+                                   placeholder="Reorder Level" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="unit_price_{{ product.pk }}">Unit Price</label>
+                            <input class="form-control"
+                                   type="number"
+                                   step="0.01"
+                                   name="unit_price"
+                                   id="unit_price_{{ product.pk }}"
+                                   value="{{ product.unit_price }}"
+                                   placeholder="Unit Price" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,110 @@
+<div class="modal modal-lg fade" id="add_supplier_modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Add New Supplier</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="add_supplier_form" action="{% url 'inventory:create_supplier' %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div id="supplier_form_errors"></div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="supplier_name">Supplier Name</label>
+                            <input class="form-control" type="text" name="supplier_name" id="supplier_name" placeholder="Supplier Name" />
+                        </div>
+                        <div class="col">
+                            <label for="contact_name">Contact Name</label>
+                            <input class="form-control" type="text" name="contact_name" id="contact_name" placeholder="Contact Name" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="phone">Phone</label>
+                            <input class="form-control" type="text" name="phone" id="phone" placeholder="Phone" />
+                        </div>
+                        <div class="col">
+                            <label for="email">Email</label>
+                            <input class="form-control" type="email" name="email" id="email" placeholder="Email" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="address">Address</label>
+                            <input class="form-control" type="text" name="address" id="address" placeholder="Address" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="city">City</label>
+                            <input class="form-control" type="text" name="city" id="city" placeholder="City" />
+                        </div>
+                        <div class="col">
+                            <label for="state">State</label>
+                            <input class="form-control" type="text" name="state" id="state" placeholder="State" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="postal_code">Postal Code</label>
+                            <input class="form-control" type="text" name="postal_code" id="postal_code" placeholder="Postal Code" />
+                        </div>
+                        <div class="col">
+                            <label for="country">Country</label>
+                            <input class="form-control" type="text" name="country" id="country" placeholder="Country" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById('add_supplier_form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var form = this;
+        var formData = new FormData(form);
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            var errorContainer = document.getElementById('supplier_form_errors');
+            errorContainer.innerHTML = '';
+            if (data.success) {
+                var successAlert = '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                    data.message +
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                    '</div>';
+                errorContainer.innerHTML = successAlert;
+                setTimeout(function() {
+                    location.reload();
+                }, 2000);
+            } else {
+                var errorAlert = '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                    (data.message || 'An error occurred.') +
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                    '</div>';
+                errorContainer.innerHTML = errorAlert;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            var errorContainer = document.getElementById('supplier_form_errors');
+            var errorAlert = '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                'An error occurred.' +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                '</div>';
+            errorContainer.innerHTML = errorAlert;
+        });
+    });
+</script>
