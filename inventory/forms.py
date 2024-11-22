@@ -20,12 +20,13 @@ class SupplierForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['product_name', 'category', 'supplier', 'quantity_in_stock', 'reorder_level', 'unit_price']
+        fields = ['product_name', 'category', 'supplier', 'quantity_in_stock', 'reorder_level', 'cost_price', 'selling_price']
         widgets = {
             'product_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Product Name'}),
             'category': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Category'}),
             'supplier': forms.Select(attrs={'class': 'form-control'}),
             'quantity_in_stock': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Quantity in Stock'}),
             'reorder_level': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Reorder Level'}),
-            'unit_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Unit Price', 'step': '0.01'}),
+            'cost_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cost Price', 'step': '0.01'}),
+            'selling_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Selling Price', 'step': '0.01'}),
         }

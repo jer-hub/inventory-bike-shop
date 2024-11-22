@@ -42,6 +42,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h3 class="my-3">List of Products</h3>
                     <div>
+                        <a class="btn btn-secondary" href="{% url 'inventory:products_report' %}">Show Report</a>
                         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#add_product_modal">Add Product</button>
                         {% include 'inventory/components/product_add_modal.html' %}
                     </div>
@@ -68,7 +69,8 @@
                             <th scope="col"><a class="text-decoration-none" href="?sort=supplier__supplier_name&order={% if sort_by == 'supplier__supplier_name' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}">Supplier</a></th>
                             <th scope="col"><a class="text-decoration-none" href="?sort=quantity_in_stock&order={% if sort_by == 'quantity_in_stock' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}">Quantity in Stock</a></th>
                             <th scope="col"><a class="text-decoration-none" href="?sort=reorder_level&order={% if sort_by == 'reorder_level' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}">Reorder Level</a></th>
-                            <th scope="col"><a class="text-decoration-none" href="?sort=unit_price&order={% if sort_by == 'unit_price' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}">Unit Price</a></th>
+                            <th scope="col"><a class="text-decoration-none" href="?sort=cost_price&order={% if sort_by == 'cost_price' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}">Cost Price</a></th>
+                            <th scope="col"><a class="text-decoration-none" href="?sort=selling_price&order={% if sort_by == 'selling_price' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}">Selling Price</a></th>
                             <th scope="col"><a class="text-decoration-none" href="?sort=date_added&order={% if sort_by == 'date_added' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query }}">Date Added</a></th>
                             <th scope="col">Actions</th>
                         </tr>
@@ -80,14 +82,29 @@
                                 <td>{{ product.product_name }}</td>
                                 <td>{{ product.category }}</td>
                                 <td>{{ product.supplier.supplier_name }}</td>
-                                <td>{{ product.quantity_in_stock }}</td>
+                                {% if product.quantity_in_stock < product.reorder_level %}
+                                    <td class="text-danger">{{ product.quantity_in_stock }}</td>
+                                {% else %}
+                                    <td>{{ product.quantity_in_stock }}</td>
+                                {% endif %}
                                 <td>{{ product.reorder_level }}</td>
-                                <td>{{ product.unit_price }}</td>
+                                <td>P{{ product.cost_price }}</td>
+                                <td>P{{ product.selling_price }}</td>
                                 <td>{{ product.date_added }}</td>
-                                <td>
-                                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#edit_modal_{{ product.pk }}">Edit</button>
+                                <td class="d-flex gap-2">
+                                    <div class="" data-bs-toggle="modal" data-bs-target="#edit_modal_{{ product.pk }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                        </svg>
+                                    </div>
                                     {% include 'inventory/components/product_edit_modal.html' with form=edit_forms.product.pk %}
-                                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete_modal_{{ product.pk }}">Delete</button>
+                                    <div class="" data-bs-toggle="modal" data-bs-target="#delete_modal_{{ product.pk }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="red" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                          </svg>
+                                    </div>
                                     {% include 'inventory/components/product_delete_modal.html' %}
                                 </td>
                             </tr>

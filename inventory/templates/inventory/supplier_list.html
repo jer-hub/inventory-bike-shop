@@ -1,151 +1,239 @@
 {% extends 'inventory/base.html' %}
 {% load form_tags %}
-{% block title %}Suppliers{% endblock %}
+{% block title %}
+  Suppliers
+{% endblock %}
 {% block content %}
-<style>
+  <style>
     .filter-form {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     .filter-form .form-group {
-        flex: 1;
-        min-width: 200px;
+      flex: 1;
+      min-width: 200px;
     }
     .filter-container {
-        width: 100%;
-        max-width: 1140px; /* Bootstrap lg container width */
-        margin: 0 auto;
+      width: 100%;
+      max-width: 1140px; /* Bootstrap lg container width */
+      margin: 0 auto;
     }
-</style>
-<main class="container my-5">
+  </style>
+  <main class="container my-5">
     <div class="my-3">
-        <a href="{% url 'inventory:view_main' %}" class="text-decoration-none text-dark">
-            <div class="d-flex align-items-center">
-                <img src="https://img.icons8.com/?size=45&id=4NUeu__UwtXf&format=png&color=000000" alt="" class="mx-2" />
-                <h3>Sylvester's Inventory Management</h3>
-            </div>
-        </a>
+      <a href="{% url 'inventory:view_main' %}" class="text-decoration-none text-dark">
+        <div class="d-flex align-items-center">
+          <img src="https://img.icons8.com/?size=45&id=4NUeu__UwtXf&format=png&color=000000" alt="" class="mx-2" />
+          <h3>Sylvester's Inventory Management</h3>
+        </div>
+      </a>
     </div>
     <div class="container">
-        {% if messages %}
-            <div class="alert alert-dismissible fade show" role="alert">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                {% endfor %}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endif %}
+      {% if messages %}
+        <div class="alert alert-dismissible fade show" role="alert">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
     </div>
     <div class="d-flex justify-content-center align-items-center shadow p-3 mb-5 rounded-4">
-        <div class="filter-container">
-            <div class="d-flex justify-content-between align-items-center">
-                <h3 class="my-3">List of Suppliers</h3>
-                <div>
-                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#add_supplier_modal">Add Supplier</button>
-                    {% include 'inventory/components/supplier_add_modal.html' %}
-                </div>
-            </div>
-            <button class="btn btn-secondary mb-3" id="toggle-filter-btn">Show Filters</button>
-            <form method="GET" action="{% url 'inventory:supplier_list' %}" class="mb-3 filter-form" id="filter-form" style="display: none;">
-                {% for field in filter.form %}
-                    <div class="form-group">
-                        {{ field.label_tag }}
-                        {{ field|add_class:"form-control" }}
-                    </div>
-                {% endfor %}
-                <div class="input-group">
-                    <input type="text" class="form-control" name="q" placeholder="Search suppliers..." value="{{ request.GET.q }}">
-                    <button class="btn btn-outline-secondary" type="submit">Search</button>
-                </div>
-            </form>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col"><a class="text-decoration-none" href="?sort=supplier_name&order={% if sort_by == 'supplier_name' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ request.GET.q }}">Supplier Name</a></th>
-                        <th scope="col"><a class="text-decoration-none" href="?sort=contact_name&order={% if sort_by == 'contact_name' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ request.GET.q }}">Contact Name</a></th>
-                        <th scope="col"><a class="text-decoration-none" href="?sort=phone&order={% if sort_by == 'phone' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ request.GET.q }}">Phone</a></th>
-                        <th scope="col"><a class="text-decoration-none" href="?sort=email&order={% if sort_by == 'email' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ request.GET.q }}">Email</a></th>
-                        <th scope="col"><a class="text-decoration-none" href="?sort=address&order={% if sort_by == 'address' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ request.GET.q }}">Address</a></th>
-                        <th scope="col"><a class="text-decoration-none" href="?sort=city&order={% if sort_by == 'city' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ request.GET.q }}">City</a></th>
-                        <th scope="col"><a class="text-decoration-none" href="?sort=state&order={% if sort_by == 'state' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ request.GET.q }}">State</a></th>
-                        <th scope="col"><a class="text-decoration-none" href="?sort=postal_code&order={% if sort_by == 'postal_code' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ request.GET.q }}">Postal Code</a></th>
-                        <th scope="col"><a class="text-decoration-none" href="?sort=country&order={% if sort_by == 'country' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ request.GET.q }}">Country</a></th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for supplier in page_obj %}
-                        <tr>
-                            <th scope="row">{{ forloop.counter }}</th>
-                            <td>{{ supplier.supplier_name }}</td>
-                            <td>{{ supplier.contact_name }}</td>
-                            <td>{{ supplier.phone }}</td>
-                            <td>{{ supplier.email }}</td>
-                            <td>{{ supplier.address }}</td>
-                            <td>{{ supplier.city }}</td>
-                            <td>{{ supplier.state }}</td>
-                            <td>{{ supplier.postal_code }}</td>
-                            <td>{{ supplier.country }}</td>
-                            <td class="d-flex gap-2">
-                                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#edit_modal_{{ supplier.pk }}">Edit</button>
-                                {% include 'inventory/components/supplier_edit_modal.html' with form=edit_forms.supplier.pk %}
-                                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete_modal_{{ supplier.pk }}">Delete</button>
-                                {% include 'inventory/components/supplier_delete_modal.html' %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}&sort={{ sort_by }}" aria-label="First">
-                                <span aria-hidden="true">&laquo;&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}&sort={{ sort_by }}" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                    {% endif %}
-                    {% for num in page_obj.paginator.page_range %}
-                        {% if page_obj.number == num %}
-                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                            <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}&sort={{ sort_by }}">{{ num }}</a></li>
-                        {% endif %}
-                    {% endfor %}
-                    {% if page_obj.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}&sort={{ sort_by }}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}&sort={{ sort_by }}" aria-label="Last">
-                                <span aria-hidden="true">&raquo;&raquo;</span>
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
+      <div class="filter-container">
+        <div class="d-flex justify-content-between align-items-center">
+          <h3 class="my-3">List of Suppliers</h3>
+          <div>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#add_supplier_modal">Add Supplier</button>
+            {% include 'inventory/components/supplier_add_modal.html' %}
+          </div>
         </div>
+        <button class="btn btn-secondary mb-3" id="toggle-filter-btn">Show Filters</button>
+        <form method="GET" action="{% url 'inventory:supplier_list' %}" class="mb-3 filter-form" id="filter-form" style="display: none;">
+          {% for field in filter.form %}
+            <div class="form-group">{{ field.label_tag }}
+              {{ field|add_class:'form-control' }}</div>
+          {% endfor %}
+          <div class="input-group">
+            <input type="text" class="form-control" name="q" placeholder="Search suppliers..." value="{{ request.GET.q }}" />
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+          </div>
+        </form>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Supplier Name</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Products</th>
+              {% comment %} <th scope="col">
+                <a class="text-decoration-none"
+                  href="?sort=address&order={% if sort_by == 'address' and order == 'asc' %}
+                    desc
+                  {% else %}
+                    asc
+                  {% endif %}&q={{ request.GET.q }}">
+                  Address
+                </a>
+              </th>
+              <th scope="col">
+                <a class="text-decoration-none"
+                  href="?sort=city&order={% if sort_by == 'city' and order == 'asc' %}
+                    desc
+                  {% else %}
+                    asc
+                  {% endif %}&q={{ request.GET.q }}">
+                  City
+                </a>
+              </th>
+              <th scope="col">
+                <a class="text-decoration-none"
+                  href="?sort=state&order={% if sort_by == 'state' and order == 'asc' %}
+                    desc
+                  {% else %}
+                    asc
+                  {% endif %}&q={{ request.GET.q }}">
+                  State
+                </a>
+              </th>
+              <th scope="col">
+                <a class="text-decoration-none"
+                  href="?sort=postal_code&order={% if sort_by == 'postal_code' and order == 'asc' %}
+                    desc
+                  {% else %}
+                    asc
+                  {% endif %}&q={{ request.GET.q }}">
+                  Postal Code
+                </a>
+              </th>
+              <th scope="col">
+                <a class="text-decoration-none"
+                  href="?sort=country&order={% if sort_by == 'country' and order == 'asc' %}
+                    desc
+                  {% else %}
+                    asc
+                  {% endif %}&q={{ request.GET.q }}">
+                  Country
+                </a>
+              </th> {% endcomment %}
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for supplier in page_obj %}
+              <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ supplier.supplier_name }}</td>
+                <td>{{ supplier.phone }}</td>
+                <td>
+                  {% for product in supplier.products.all %}
+                    <li class="p-0 m-0">
+                      <span>{{ product.product_name }}</span>
+                    </li>
+
+                    <div>
+                      <small class="text-muted">category: {{ product.category }}</small>
+                    </div>
+                    <div>
+                      <small class="text-muted">quantity: {{ product.quantity_in_stock }} | reorder level: {{ product.reorder_level }}</small>
+                    </div>
+                  {% empty %}
+                    N/A
+                  {% endfor %}
+                </td>
+                <td class="d-flex gap-2">
+                  <div data-bs-toggle="modal" data-bs-target="#edit_modal_{{ supplier.pk }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                      <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                      <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                    </svg>
+                  </div>
+                  {% include 'inventory/components/supplier_edit_modal.html' with form=edit_forms.supplier.pk %}
+                  <div data-bs-toggle="modal" data-bs-target="#delete_modal_{{ supplier.pk }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="red" class="bi bi-trash" viewBox="0 0 16 16">
+                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                      <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                    </svg>
+                  </div>
+                  {% include 'inventory/components/supplier_delete_modal.html' %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link"
+                  href="?page=1{% if request.GET.q %}
+                    &q={{ request.GET.q }}
+                  {% endif %}&sort={{ sort_by }}"
+                  aria-label="First">
+                  <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link"
+                  href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}
+                    &q={{ request.GET.q }}
+                  {% endif %}&sort={{ sort_by }}"
+                  aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+              {% if page_obj.number == num %}
+                <li class="page-item active">
+                  <span class="page-link">{{ num }}</span>
+                </li>
+              {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                  <a class="page-link"
+                    href="?page={{ num }}{% if request.GET.q %}
+                      &q={{ request.GET.q }}
+                    {% endif %}&sort={{ sort_by }}">
+                    {{ num }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link"
+                  href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}
+                    &q={{ request.GET.q }}
+                  {% endif %}&sort={{ sort_by }}"
+                  aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link"
+                  href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}
+                    &q={{ request.GET.q }}
+                  {% endif %}&sort={{ sort_by }}"
+                  aria-label="Last">
+                  <span aria-hidden="true">&raquo;&raquo;</span>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
     </div>
-</main>
-<script>
-    document.getElementById('toggle-filter-btn').addEventListener('click', function() {
-        var filterForm = document.getElementById('filter-form');
-        if (filterForm.style.display === 'none') {
-            filterForm.style.display = 'flex';
-            this.textContent = 'Hide Filters';
-        } else {
-            filterForm.style.display = 'none';
-            this.textContent = 'Show Filters';
-        }
-    });
-</script>
+  </main>
+  <script>
+    document.getElementById('toggle-filter-btn').addEventListener('click', function () {
+      var filterForm = document.getElementById('filter-form')
+      if (filterForm.style.display === 'none') {
+        filterForm.style.display = 'flex'
+        this.textContent = 'Hide Filters'
+      } else {
+        filterForm.style.display = 'none'
+        this.textContent = 'Show Filters'
+      }
+    })
+  </script>
 {% endblock %}

@@ -1,0 +1,105 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<main class="container my-5">
+    <div class="my-3">
+        <a href="{% url 'inventory:view_main' %}" class="text-decoration-none text-dark">
+            <div class="d-flex align-items-center">
+                <img src="https://img.icons8.com/?size=45&id=4NUeu__UwtXf&format=png&color=000000" alt="" class="mx-2" />
+                <h3>Sylvester's Inventory Management</h3>
+            </div>
+        </a>
+    </div>
+    <div class="d-flex justify-content-center align-items-center shadow p-3 rounded-4">
+        <div class="my-3">
+            <h3 class="text-decoration-underline">Reports</h3>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-start my-3 p-3 shadow rounded-4">
+        <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+          <button class="nav-link active" id="v-pills-price-tab" data-bs-toggle="pill" data-bs-target="#v-pills-price" type="button" role="tab" aria-controls="v-pills-price" aria-selected="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-clipboard-data" viewBox="0 0 16 16">
+                <path d="M4 11a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0zm6-4a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0zM7 9a1 1 0 0 1 2 0v3a1 1 0 1 1-2 0z"/>
+                <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+                <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+              </svg>
+          </button>
+          <button class="nav-link" id="v-pills-low-tab" data-bs-toggle="pill" data-bs-target="#v-pills-low" type="button" role="tab" aria-controls="v-pills-low" aria-selected="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="red" class="bi bi-graph-down-arrow" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 11.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-1 0v2.6l-3.613-4.417a.5.5 0 0 0-.74-.037L7.06 8.233 3.404 3.206a.5.5 0 0 0-.808.588l4 5.5a.5.5 0 0 0 .758.06l2.609-2.61L13.445 11H10.5a.5.5 0 0 0-.5.5"/>
+              </svg>
+          </button>
+        </div>
+        <div class="tab-content" id="v-pills-tabContent">
+          <div class="tab-pane fade show active" id="v-pills-price" role="tabpanel" aria-labelledby="v-pills-price-tab" tabindex="0">
+            <div>
+                <h3>The five most expensive bicycles</h3>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Supplier</th>
+                        <th scope="col">Quantity in Stock</th>
+                        <th scope="col">Reorder Level</th>
+                        <th scope="col">Cost Price</th>
+                        <th scope="col">Selling Price</th>
+                        <th scope="col">Markup Percentage</th>
+                        <th scope="col">Date Added</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td>{{ product.product_name }}</td>
+                            <td>{{ product.category }}</td>
+                            <td>{{ product.supplier.supplier_name }}</td>
+                            <td>{{ product.quantity_in_stock }}</td>
+                            <td>{{ product.reorder_level }}</td>
+                            <td>P{{ product.cost_price }}</td>
+                            <td>P{{ product.selling_price }}</td>
+                            <td>{{ product.markup }}%</td>
+                            <td>{{ product.date_added }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="v-pills-low" role="tabpanel" aria-labelledby="v-pills-low-tab" tabindex="0">
+            <div>
+                <h3>Low in Quantity</h3>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Quantity in Stock</th>
+                        <th scope="col">Reorder Level</th>
+                        <th scope="col">Supplier</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in low_qty_products %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td>{{ product.product_name }}</td>
+                            <td>{{ product.quantity_in_stock }}</td>
+                            <td>{{ product.reorder_level }}</td>
+                            <td>{{ product.supplier.supplier_name }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+</main>
+
+{% endblock content %}

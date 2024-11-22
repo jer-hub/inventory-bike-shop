@@ -5,6 +5,8 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 import django_filters # type: ignore
 from django.http import JsonResponse
+from django.db.models import F
+from django.db.models.functions import Round
 
 class SupplierFilter(django_filters.FilterSet):
     class Meta:
@@ -14,12 +16,14 @@ class SupplierFilter(django_filters.FilterSet):
 class ProductFilter(django_filters.FilterSet):
     quantity_in_stock__gt = django_filters.NumberFilter(field_name='quantity_in_stock', lookup_expr='gt')
     quantity_in_stock__lt = django_filters.NumberFilter(field_name='quantity_in_stock', lookup_expr='lt')
-    unit_price__gt = django_filters.NumberFilter(field_name='unit_price', lookup_expr='gt')
-    unit_price__lt = django_filters.NumberFilter(field_name='unit_price', lookup_expr='lt')
+    cost_price__gt = django_filters.NumberFilter(field_name='cost_price', lookup_expr='gt')
+    cost_price__lt = django_filters.NumberFilter(field_name='cost_price', lookup_expr='lt')
+    selling_price__gt = django_filters.NumberFilter(field_name='selling_price', lookup_expr='gt')
+    selling_price__lt = django_filters.NumberFilter(field_name='selling_price', lookup_expr='lt')
 
     class Meta:
         model = Product
-        fields = ['product_name', 'category', 'supplier__supplier_name', 'quantity_in_stock', 'reorder_level', 'unit_price']
+        fields = ['product_name', 'category', 'supplier__supplier_name', 'quantity_in_stock', 'reorder_level', 'cost_price', 'selling_price']
 
 def create_supplier(request):
     if request.method == 'POST':
@@ -60,7 +64,7 @@ def supplier_list(request):
         sort_by = 'supplier_name'
     if order == 'desc':
         sort_by = '-' + sort_by
-    suppliers = Supplier.objects.all()
+    suppliers = Supplier.objects.all().order_by('supplier_name')
     if query:
         suppliers = suppliers.filter(
             Q(supplier_name__icontains=query) |
@@ -74,7 +78,7 @@ def supplier_list(request):
             Q(country__icontains=query)
         )
     _filter = SupplierFilter(request.GET, queryset=suppliers.order_by(sort_by))
-    paginator = Paginator(_filter.qs, 5)  # Show 5 suppliers per page
+    paginator = Paginator(_filter.qs, 25)  # Show 5 suppliers per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -86,7 +90,7 @@ def product_list(request):
     sort_by = request.GET.get('sort', 'product_name')
     order = request.GET.get('order', 'asc')
     query = request.GET.get('q', '')
-    if sort_by not in ['product_name', 'category', 'supplier__supplier_name', 'quantity_in_stock', 'reorder_level', 'unit_price', 'date_added']:
+    if sort_by not in ['product_name', 'category', 'supplier__supplier_name', 'quantity_in_stock', 'reorder_level', 'cost_price', 'selling_price', 'date_added']:
         sort_by = 'product_name'
     if order == 'desc':
         sort_by = '-' + sort_by
@@ -98,11 +102,12 @@ def product_list(request):
             Q(supplier__supplier_name__icontains=query) |
             Q(quantity_in_stock__icontains=query) |
             Q(reorder_level__icontains=query) |
-            Q(unit_price__icontains=query) |
+            Q(cost_price__icontains=query) |
+            Q(selling_price__icontains=query) |
             Q(date_added__icontains=query)
         )
     _filter = ProductFilter(request.GET, queryset=products.order_by(sort_by))
-    paginator = Paginator(_filter.qs, 5)  # Show 5 products per page
+    paginator = Paginator(_filter.qs, 25)  # Show 5 products per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -146,7 +151,7 @@ def update_product(request, pk):
             'supplier': product.supplier,
             'quantity_in_stock': product.quantity_in_stock,
             'reorder_level': product.reorder_level,
-            'unit_price': product.unit_price,
+            'cost_price': product.cost_price,
         })
     suppliers = Supplier.objects.all()
     return render(request, 'inventory/product_form.html', {'form': form, 'suppliers': suppliers})
@@ -164,3 +169,11 @@ def delete_product(request, pk):
         product.delete()
         return redirect('inventory:product_list')
     return render(request, 'inventory/product_confirm_delete.html', {'product': product})
+
+
+def products_showreport(request):
+    products = Product.objects.order_by('-cost_price').annotate(
+        markup=Round((F('selling_price') - F('cost_price')) / F('cost_price') * 100, 2)
+    )[:5]
+    low_qty_products = Product.objects.filter(quantity_in_stock__lt=F('reorder_level'))
+    return render(request, 'inventory/product_showreport.html', {'products': products, 'low_qty_products': low_qty_products})
